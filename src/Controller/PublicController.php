@@ -49,9 +49,8 @@ class PublicController extends AbstractController
         dd($data);
         $form = $this->createForm(UsersType::class, $users);
         $form->submit($data);
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($users);
-        $em->flush();
+        $entityManager->persist($users);
+        $entityManager->flush();
         return $this->json($data, 200, [], ['groups' => ['users', 'address']]);
     }
 }
