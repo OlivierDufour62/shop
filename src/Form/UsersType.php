@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Addresses;
 use App\Entity\Users;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,8 +19,9 @@ class UsersType extends AbstractType
             ->add('email')
             ->add('password')
             ->add('pseudo')
-            ->add('addresses')
-        ;
+            ->add('addresses', AddressType::class, [
+                'data_class' => null
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

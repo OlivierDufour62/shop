@@ -6,7 +6,6 @@ use App\Entity\Addresses;
 use App\Entity\Users;
 use App\Form\UsersType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -45,9 +44,17 @@ class PublicController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $users = $entityManager->getRepository(Users::class)
             ->find($id);
+        $addresses = $entityManager->getRepository(Addresses::class)
+            ->findBy(['user_id' => $users])[0] ?? null;
+        // dd($addresses);
         $data = json_decode($request->getContent(), true);
-        dd($data);
+        // dd($data['addresses'][0]['addressline1']);
         $form = $this->createForm(UsersType::class, $users);
+        // dd($form->getData());
+        $addresses->setAddressline1($data['addresses'][0]['addressline1'])
+                    ->setPostalcode($data['addresses'][0]['postalcode'])
+                    ->setCity($data['addresses'][0]['city'])
+                    ->setCountry($data['addresses'][0]['country']);
         $form->submit($data);
         $entityManager->persist($users);
         $entityManager->flush();
