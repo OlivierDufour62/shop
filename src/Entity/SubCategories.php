@@ -6,6 +6,8 @@ use App\Repository\SubCategoriesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity(repositoryClass=SubCategoryIdRepository::class)
@@ -21,6 +23,7 @@ class SubCategories
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Groups({"subcat"})
      */
     private $name;
 
@@ -45,8 +48,9 @@ class SubCategories
     private $hidden;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Categories::class)
+     * @ORM\ManyToOne(targetEntity=Categories::class, cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"subcat"})
      */
     private $categoryId;
 
@@ -58,6 +62,11 @@ class SubCategories
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->setHidden(true);
+        // a voir
+        $this->setImportance(10);
+        $this->setCreatedAt(new \DateTime('now'));
+        $this->setUpdatedAt(new \DateTime('now'));
     }
 
     public function getId(): ?int
