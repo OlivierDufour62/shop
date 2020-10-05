@@ -22,7 +22,7 @@ class PublicController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($addedUsers);
         $entityManager->flush();
-        // return $this->json($addedUsers, 200, [], ['groups' => 'users', 'groups' => 'address']);
+        return $this->json($addedUsers, 200, [], ['groups' => 'users', 'address']);
     }
 
     /**

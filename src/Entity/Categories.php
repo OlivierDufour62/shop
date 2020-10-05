@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CategoriesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=CategoriesRepository::class)
@@ -19,6 +20,7 @@ class Categories
 
     /**
      * @ORM\Column(type="string", length=25)
+     * @Groups({"cat"})
      */
     private $name;
 
@@ -43,9 +45,18 @@ class Categories
     private $hidden;
 
     /**
-     * @ORM\Column(type="string", length=40)
+     * @ORM\Column(type="string", length=40, nullable=true)
      */
     private $publicId;
+
+    public function __construct()
+    {
+        $this->setHidden(true);
+        // a voir
+        $this->setImportance(10);
+        $this->setCreatedAt(new \DateTime('now'));
+        $this->setUpdatedAt(new \DateTime('now'));
+    }
 
     public function getId(): ?int
     {
