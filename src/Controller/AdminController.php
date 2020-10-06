@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Addresses;
 use App\Entity\Categories;
+use App\Entity\Products;
 use App\Entity\SubCategories;
 use App\Entity\Users;
 use App\Form\CategoriesType;
-use App\Form\SubCategoriesType;
 use App\Form\UsersType;
 use App\Form\SubCatType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +18,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class AdminController extends AbstractController
 {
 
+    //categories and sub categories
     /**
      * @Route("/api/addcat", name="api_add_cat", methods={"POST"})
      */
@@ -70,8 +71,8 @@ class AdminController extends AbstractController
                     ->find(["id" => $data['categoryId']]);
         // dd($categories);
         // dd($data);
-        $addSubCat->setName($data['name']);
-        $addSubCat->setCategoryId($categories);
+        $addSubCat->setName($data['name'])
+                    ->setCategoryId($categories);
         $entityManager->persist($addSubCat);
         $entityManager->flush();
         return $this->json($addSubCat, 200, [], ['groups' => 'subcat']);
@@ -102,5 +103,43 @@ class AdminController extends AbstractController
         $categories = $entityManager->getRepository(SubCategories::class)
             ->findAll();
         return $this->json($categories, 200, [], ['groups' => 'subcat']);
+    }
+
+    /**
+     * @Route("/api/addproduct", name="api_add_product", methods={"POST"})
+     */
+    public function addProduct(Request $request)
+    {
+        $addProduct = new Products();
+        $entityManager = $this->getDoctrine()->getManager();
+        $data = json_decode($request->getContent(), true);
+        // dd($data);
+        $subCat = $entityManager->getRepository(SubCategories::class)
+                                ->find(["id" => $data['subCategoryId']]);
+        $addProduct->setName($data['name'])
+                    ->setBuyPrice($data['buyPrice'])
+                    ->setSellPrice($data['sellPrice'])
+                    ->setStock($data['stock'])
+                    ->setDiscount($data['discount'])
+                    ->setCustomizable($data['customizable'])
+                    ->setNumberBuy($data['numberBuy'])
+                    ->setSearchQueryTerms($data['searchQueryTerms'])
+                    ->setInternalReference($data['internalReference'])
+                    ->setReference($data['reference'])
+                    ->setSubCategoryId($subCat);
+        $entityManager->persist($addProduct);
+        $entityManager->flush();
+        return $this->json($addProduct, 200, [], ['groups' => 'product']);
+    }
+
+    /**
+     * @Route("/api/listproduct", name="api_list_product", methods={"GET"})
+     */
+    public function listProduct()
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $categories = $entityManager->getRepository(Products::class)
+            ->findAll();
+        return $this->json($categories, 200, [], ['groups' => ['product', 'subcat']]);
     }
 }

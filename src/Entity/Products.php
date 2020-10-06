@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ProductsRepository::class)
@@ -14,90 +15,115 @@ class Products
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"product"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=40)
+     * @Groups({"product"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"product"})
      */
     private $sellPrice;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"product"})
      */
     private $buyPrice;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"product"})
      */
     private $stock;
 
     /**
      * @ORM\Column(type="string", length=5)
+     * @Groups({"product"})
      */
     private $discount;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
+     * @Groups({"product"})
      */
     private $customizable;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"product"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"product"})
      */
     private $updatedAt;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"product"})
      */
     private $numberBuy;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"product"})
      */
     private $hidden;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"product"})
      */
     private $importance;
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Groups({"product"})
      */
     private $searchQueryTerms;
 
     /**
      * @ORM\Column(type="string", length=30)
+     * @Groups({"product"})
      */
     private $internalReference;
 
     /**
      * @ORM\Column(type="string", length=30)
+     * @Groups({"product"})
      */
     private $reference;
 
     /**
      * @ORM\ManyToOne(targetEntity=Orders::class, inversedBy="productId")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"product"})
      */
     private $orders;
 
     /**
      * @ORM\ManyToOne(targetEntity=SubCategories::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"subcat"})
      */
     private $subCategoryId;
+
+    public function __construct()
+    {
+        $this->setImportance(10);
+        $this->setHidden(true);
+        $this->setCreatedAt(new \DateTime('now'));
+        $this->setUpdatedAt(new \DateTime('now'));
+    }
 
     public function getId(): ?int
     {
