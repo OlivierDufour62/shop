@@ -9,6 +9,7 @@ use App\Entity\Users;
 use App\Form\CategoriesType;
 use App\Form\SubCategoriesType;
 use App\Form\UsersType;
+use App\Form\SubCatType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -60,15 +61,16 @@ class AdminController extends AbstractController
     /**
      * @Route("/api/addsubcat", name="api_add_sub_cat", methods={"POST"})
      */
-    public function addSubCategories(Request $request, SerializerInterface $serializer)
+    public function addSubCategories(Request $request)
     {
-        $subCat = json_decode($request->getContent(), true);
-        // dd($subCat["categoryId"]);
-        // $addSubCat = $serializer->deserialize($subCat, SubCategories::class, 'json');
         $addSubCat = new SubCategories();
         $entityManager = $this->getDoctrine()->getManager();
+        $data = json_decode($request->getContent(), true);
         $categories = $entityManager->getRepository(Categories::class)
-                    ->findBy(["id" => $subCat["categoryId"]]);
+                    ->find(["id" => $data['categoryId']]);
+        // dd($categories);
+        // dd($data);
+        $addSubCat->setName($data['name']);
         $addSubCat->setCategoryId($categories);
         $entityManager->persist($addSubCat);
         $entityManager->flush();
@@ -81,18 +83,18 @@ class AdminController extends AbstractController
     public function editSubCategories(Request $request, $id)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $category = $entityManager->getRepository(SubCategories::class)
-            ->find($id);
+        $subCategory = $entityManager->getRepository(SubCategories::class)
+                                    ->find($id);
         $data = json_decode($request->getContent(), true);
-        $form = $this->createForm(SubCategoriesType::class, $category);
+        $form = $this->createForm(SubCatType::class, $subCategory);
         $form->submit($data);
-        $entityManager->persist($category);
+        $entityManager->persist($subCategory);
         $entityManager->flush();
         return $this->json($data, 200, [], ['groups' => 'subcat']);
     }
 
     /**
-     * @Route("/api/listcat", name="api_list_sub_cat", methods={"GET"})
+     * @Route("/api/listsubcat", name="api_list_sub_cat", methods={"GET"})
      */
     public function listSubCat()
     {

@@ -10,7 +10,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 
 /**
- * @ORM\Entity(repositoryClass=SubCategoryIdRepository::class)
+ * @ORM\Entity(repositoryClass=SubCategoriesRepository::class)
  */
 class SubCategories
 {

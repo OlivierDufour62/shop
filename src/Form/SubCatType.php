@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Categories;
 use App\Entity\SubCategories;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,8 +15,9 @@ class SubCatType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('categoryId')
-        ;
+            ->add('categoryId', EntityType::class, [
+                'class' => Categories::class
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
