@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -117,12 +119,24 @@ class Products
      */
     private $subCategoryId;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Stickers::class, mappedBy="products")
+     */
+    private $stickers;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ProductsColours::class, mappedBy="products")
+     */
+    private $productsColours;
+
     public function __construct()
     {
         $this->setImportance(10);
         $this->setHidden(true);
         $this->setCreatedAt(new \DateTime('now'));
         $this->setUpdatedAt(new \DateTime('now'));
+        $this->stickers = new ArrayCollection();
+        $this->productsColours = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -318,6 +332,68 @@ class Products
     public function setSubCategoryId(?SubCategories $subCategoryId): self
     {
         $this->subCategoryId = $subCategoryId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Stickers[]
+     */
+    public function getStickers(): Collection
+    {
+        return $this->stickers;
+    }
+
+    public function addSticker(Stickers $sticker): self
+    {
+        if (!$this->stickers->contains($sticker)) {
+            $this->stickers[] = $sticker;
+            $sticker->setProducts($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSticker(Stickers $sticker): self
+    {
+        if ($this->stickers->contains($sticker)) {
+            $this->stickers->removeElement($sticker);
+            // set the owning side to null (unless already changed)
+            if ($sticker->getProducts() === $this) {
+                $sticker->setProducts(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductsColours[]
+     */
+    public function getProductsColours(): Collection
+    {
+        return $this->productsColours;
+    }
+
+    public function addProductsColour(ProductsColours $productsColour): self
+    {
+        if (!$this->productsColours->contains($productsColour)) {
+            $this->productsColours[] = $productsColour;
+            $productsColour->setProducts($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductsColour(ProductsColours $productsColour): self
+    {
+        if ($this->productsColours->contains($productsColour)) {
+            $this->productsColours->removeElement($productsColour);
+            // set the owning side to null (unless already changed)
+            if ($productsColour->getProducts() === $this) {
+                $productsColour->setProducts(null);
+            }
+        }
 
         return $this;
     }
